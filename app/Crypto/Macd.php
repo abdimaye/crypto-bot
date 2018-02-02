@@ -13,25 +13,27 @@ class Macd extends Trade
 	protected $currentSma;
 	protected $currentEma;
 
-	public function go($symbol, $timeframe = '5m')
+	public function go($symbol, $timeframe = '5m', $periods = [12, 26])
 	{
+		$shortPeriod = $periods[0];
+		$longPeriod = $periods[1];
+
 		// get market data
 		// OHLCV - Open, High, Low, Close, Volume
-		$this->candles = $this->exchange->fetchOHLCV($symbol, $timeframe, $since = null, $limit = 26);
+		$this->candles = $this->exchange->fetchOHLCV($symbol, $timeframe, $since = null, $limit = $longPeriod);
 
 		// TODO: only calculate SMA when previous EMA is not available
 
 		// calculate SMA and EMA for short period
-		print_r('SMA12: ' . $this->calculateSma(12) . '<br>');
+		print_r('SMA12: ' . $this->calculateSma($shortPeriod) . '<br>');
 
-		$shortEma = $this->calculateEma(12);
+		$shortEma = $this->calculateEma($shortPeriod);
 		
 		// calculate SMA and EMA for long period
-		print_r('SMA26: ' . $this->calculateSma(26)  . '<br>');
-
-		// calculate EMA for both
+		print_r('SMA26: ' . $this->calculateSma($longPeriod)  . '<br>');
 		
-		$longEma = $this->calculateEma(26);
+		$longEma = $this->calculateEma($longPeriod);
+
 		print_r('EMA12: ' . $shortEma . '<br>');
 		print_r('EMA26: ' . $longEma . '<br>');
 
