@@ -12,9 +12,13 @@ class Macd extends Trade
 	protected $candles = [];
 	protected $currentSma;
 	protected $currentEma;
+	protected $timeframe = '5m';
+	protected $periods = [12, 26];
 
-	public function go($symbol, $timeframe = '5m', $periods = [12, 26])
+	public function go($symbol, $callback)
 	{
+		$timeframe = $this->timeframe;
+		$periods = $this->periods;
 		$shortPeriod = $periods[0];
 		$longPeriod = $periods[1];
 
@@ -25,24 +29,35 @@ class Macd extends Trade
 		// TODO: only calculate SMA when previous EMA is not available
 
 		// calculate SMA and EMA for short period
-		print_r('SMA12: ' . $this->calculateSma($shortPeriod) . '<br>');
+		$this->calculateSma($shortPeriod);
 
 		$shortEma = $this->calculateEma($shortPeriod);
 		
 		// calculate SMA and EMA for long period
-		print_r('SMA26: ' . $this->calculateSma($longPeriod)  . '<br>');
+		$this->calculateSma($longPeriod);
 		
 		$longEma = $this->calculateEma($longPeriod);
 
-		print_r('EMA12: ' . $shortEma . '<br>');
-		print_r('EMA26: ' . $longEma . '<br>');
-
 		// compare EMAs and make buy/sell decision
-		if ($shortEma > $longEma) {
-			return 'BUY if funds are available';
-		} else if ($longEma > $shortEma) {
-			return 'SELL if holding';
-		}
+		$result = $shortEma - $longEma; // buy if result > 0
+
+		$data = ['short_ema' => $shortEma, 'long_ema' => $longEma];
+
+		return $callback($result, $data);
+	}
+
+	public function setInterval(string $timeframe)
+	{
+		$this->timeframe = $timeframe;
+
+		return $this;
+	}
+
+	public function setPeriods(array $periods)
+	{
+		$this->periods = $periods;
+
+		return $this;
 	}
 
 	/**

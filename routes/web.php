@@ -14,5 +14,16 @@
 Route::get('/', function () {
     $trader = new \App\Crypto\Macd('gdax');
 
-    print_r($trader->go('BTC/EUR', $timeframe = '1m'));
+    // print_r($trader->go('BTC/EUR', $timeframe = '5m'));
+    
+    $trader->setInterval('5m')->setPeriods([12, 26])->go('BTC/EUR', function($result, $data) {
+    	// print_r($result);
+    	var_dump($data);
+    	if ($result > 0) {
+    		echo 'BUY if funds are available <br>';
+    	} else if ($result < 0) {
+    		echo 'SELL if holding <br>';
+    	}
+    	// print_r($data);
+    });
 });
