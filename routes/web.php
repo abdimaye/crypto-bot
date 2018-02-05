@@ -16,38 +16,41 @@ Route::get('/', function () {
     
     $trader->setInterval('5m')->setPeriods([12, 26])->go('BTC/EUR', function($result, $data) use ($trader) {
 
-    	$trade = App\Trade::find(request('oid'))->first();
+    	$worker = App\Worker::find(request('oid'));
 
-    	if ($trade) {
+    	if ($worker) {
 
-    		$pair = explode('/', $trade->symbol);
+    		$trade = $worker->trades()->orderBy('id', 'desc')->first();
+
+    		$worker = $worker->first();
+
+    		$pair = explode('/', $worker->symbol);
 
     		$base = $pair[0];
 
     		echo $result . '<br>';
 
-    		$ticker = $trader->exchange->fetchTicker($trade->symbol);
+    		$ticker = $trader->exchange->fetchTicker($worker->symbol);
 
+    		// print_r($trade);
+
+    		// return ;
     		if ($pair[1] == $trade->coin && $result > 0) {
     			// buy
     			echo "I have " . $trade->coin . ', I should buy ' . $base;
 
     			$newTrade = App\Trade::create([
-    				'exchange' => $trader->exchange->id,
-    				'symbol' => $trade->symbol,
+    				'worker_id' => $worker->id,
     				'amount' => $trade->amount / $ticker['last'],
     				'coin' => $base,
-    				'active' => 1
     			]);
     		} else if ($base == $trade->coin && $result < 0 ) {
     			// sell
     			echo "I have " . $base . ', I should sell for ' . $pair[1];
     			$newTrade = App\Trade::create([
-    				'exchange' => $trader->exchange->id,
-    				'symbol' => $trade->symbol,
+    				'worker_id' => $worker->id,
     				'amount' => $trade->amount * $ticker['last'],
     				'coin' => $pair[1],
-    				'active' => 1
     			]);
     		} else {
     			// chill
@@ -70,11 +73,18 @@ Route::get('/', function () {
 
 Route::get('/create-job', function () {
 
-    App\Trade::create([
+    $worker = App\Worker::create([
     	'exchange' => request('exchange'),
     	'symbol' => request('symbol'),
+    	'active' => 1
+    ]);
+
+    // print_r($worker);
+
+    App\Trade::create([
+    	'worker_id' => $worker->id,
     	'amount' => request('amount'),
-    	'coin' => request('coin')
+    	'coin' => request('coin'),
     ]);
 
     return 'created';

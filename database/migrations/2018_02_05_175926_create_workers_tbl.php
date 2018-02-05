@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTradesTbl extends Migration
+class CreateWorkersTbl extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateTradesTbl extends Migration
      */
     public function up()
     {
-        Schema::create('trades', function (Blueprint $table) {
+        Schema::create('workers', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('worker_id');
-            $table->double('amount', 16, 8);
-            $table->string('coin', 10);
+            $table->string('exchange');
+            $table->string('symbol');
+            $table->boolean('active')->default(0);
+            $table->datetime('good_until')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateTradesTbl extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('trades');
+        Schema::dropIfExists('workers');
     }
 }
