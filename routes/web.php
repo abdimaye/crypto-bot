@@ -14,60 +14,15 @@
 Route::get('/', function () {
     $trader = new \App\Crypto\Macd('gdax');
     
-    $trader->setInterval('5m')->setPeriods([12, 26])->go('BTC/EUR', function($result, $data) use ($trader) {
+    $worker = App\Worker::find(request('oid'));
 
-    	$worker = App\Worker::find(request('oid'));
+	$lastTrade = $worker->trades()->orderBy('id', 'desc')->first();
 
-    	if ($worker) {
+	$worker = $worker->first();
 
-    		$trade = $worker->trades()->orderBy('id', 'desc')->first();
-
-    		$worker = $worker->first();
-
-    		$pair = explode('/', $worker->symbol);
-
-    		$base = $pair[0];
-
-    		echo $result . '<br>';
-
-    		$ticker = $trader->exchange->fetchTicker($worker->symbol);
-
-    		// print_r($trade);
-
-    		// return ;
-    		if ($pair[1] == $trade->coin && $result > 0) {
-    			// buy
-    			echo "I have " . $trade->coin . ', I should buy ' . $base;
-
-    			$newTrade = App\Trade::create([
-    				'worker_id' => $worker->id,
-    				'amount' => $trade->amount / $ticker['last'],
-    				'coin' => $base,
-    			]);
-    		} else if ($base == $trade->coin && $result < 0 ) {
-    			// sell
-    			echo "I have " . $base . ', I should sell for ' . $pair[1];
-    			$newTrade = App\Trade::create([
-    				'worker_id' => $worker->id,
-    				'amount' => $trade->amount * $ticker['last'],
-    				'coin' => $pair[1],
-    			]);
-    		} else {
-    			// chill
-    			echo 'pair: ' . $pair[0] . '/' . $pair[1] . '<br>';
-    			echo 'base: ' . $base . '<br>';
-    			echo 'result: ' . $result . '<br>';
-
-    			if ($result > 0) {
-    				echo 'You should buy ' . $base . ' but you do not have any EUR';
-    			} else if ($result < 0) {
-    				echo 'You should sell ' . $base . ' but you do not have any ' . $base;
-    			}
-    		}
-    	
-    		// print_r($trader);
-    		return;
-    	}
+    $trader->setInterval('5m')->setPeriods([12, 26])->simulate()->go('BTC/EUR', $lastTrade, function($decision, $data) use ($trader) {
+    	// $ticker = $this->exchange->fetchTicker($this->symbol);
+    	print_r($decision);
     });
 });
 

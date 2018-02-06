@@ -9,14 +9,16 @@ namespace App\Crypto;
 
 class Macd extends Trade
 {
+	protected $symbol;
 	protected $candles = [];
 	protected $currentSma;
 	protected $currentEma;
 	protected $timeframe = '5m';
 	protected $periods = [12, 26];
 
-	public function go($symbol, $callback)
+	public function go($symbol, $lastTrade, $callback)
 	{
+		$this->symbol = $symbol;
 		$timeframe = $this->timeframe;
 		$periods = $this->periods;
 		$shortPeriod = $periods[0];
@@ -43,7 +45,9 @@ class Macd extends Trade
 
 		$data = ['short_ema' => $shortEma, 'long_ema' => $longEma];
 
-		return $callback($result, $data);
+		$decision = $this->decision($lastTrade, $result);
+
+		return $callback($decision, $data);
 	}
 
 	public function setInterval(string $timeframe)
@@ -58,6 +62,49 @@ class Macd extends Trade
 		$this->periods = $periods;
 
 		return $this;
+	}
+
+	protected function decision($lastTrade, $result)
+	{
+		$pair = explode('/', $this->symbol);
+
+		$base = $pair[0];
+
+		if ($pair[1] == $lastTrade->coin && $result > 0) {
+			// buy
+			$decision = "I have " . $lastTrade->coin . ', I should buy ' . $base;;
+
+			// $newTrade = App\Trade::create([
+			// 	'worker_id' => $worker->id,
+			// 	'amount' => $lastTrade->amount / $ticker['last'],
+			// 	'coin' => $base,
+			// ]);
+		} else if ($base == $lastTrade->coin && $result < 0 ) {
+			// sell
+			// echo "I have " . $base . ', I should sell for ' . $pair[1];
+			// $this->sell();
+			$decision = "I have " . $base . ', I should sell for ' . $pair[1];
+
+			// $newTrade = App\Trade::create([
+			// 	'worker_id' => $worker->id,
+			// 	'amount' => $lastTrade->amount * $ticker['last'],
+			// 	'coin' => $pair[1],
+			// ]);
+		} else {
+			// chill
+			$decision = 'chill';
+			// echo 'pair: ' . $pair[0] . '/' . $pair[1] . '<br>';
+			// echo 'base: ' . $base . '<br>';
+			// echo 'result: ' . $result . '<br>';
+
+			// if ($result > 0) {
+			// 	echo 'You should buy ' . $base . ' but you do not have any EUR';
+			// } else if ($result < 0) {
+			// 	echo 'You should sell ' . $base . ' but you do not have any ' . $base;
+			// }
+		}
+
+		return $decision;
 	}
 
 	/**
