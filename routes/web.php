@@ -14,6 +14,8 @@
 
 Route::get('/', 'WorkerController@index');
 
+Route::get('/worker/{id}/trades', 'TradeController@index');
+
 Route::get('/test', function () {
     $trader = new \App\Crypto\Macd('gdax');
     
@@ -31,19 +33,19 @@ Route::get('/test', function () {
 
 Route::get('/create-job', function () {
 
-    $worker = App\Worker::create([
-    	'exchange' => request('exchange'),
-    	'symbol' => request('symbol'),
-    	'active' => 1
-    ]);
+    // $worker = App\Worker::create([
+    // 	'exchange' => request('exchange'),
+    // 	'symbol' => request('symbol'),
+    // 	'active' => 1
+    // ]);
 
-    // print_r($worker);
+    // // print_r($worker);
 
-    $worker->trades()->create([
-    	// 'worker_id' => $worker->id,
-    	'amount' => request('amount'),
-    	'coin' => request('coin'),
-    ]);
+    // $worker->trades()->create([
+    // 	// 'worker_id' => $worker->id,
+    // 	'amount' => request('amount'),
+    // 	'coin' => request('coin'),
+    // ]);
 
     return 'created';
 });

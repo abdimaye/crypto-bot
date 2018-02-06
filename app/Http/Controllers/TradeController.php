@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class WorkerController extends Controller
+class TradeController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        $workers = \App\Worker::all();
+        $trades = \App\Trade::where('worker_id', $id)->get();
 
-        return view('index', compact('workers'));
+        return view('trades.index', compact('trades'));
     }
 
     /**
@@ -25,8 +25,7 @@ class WorkerController extends Controller
      */
     public function create()
     {
-        // load view
-        
+        //
     }
 
     /**
@@ -37,22 +36,7 @@ class WorkerController extends Controller
      */
     public function store(Request $request)
     {
-        $worker = App\Worker::create([
-            'exchange' => request('exchange'),
-            'symbol' => request('symbol'),
-            // 'active' => 1
-        ]);
-    }
-
-    public function storeTrade(Request $request, $id)
-    {
-        $worker = \App\Worker::findOrFail($id);
-        
-        $worker->trades()->create([
-        // 'worker_id' => $worker->id,
-            'amount' => request('amount'),
-            'coin' => request('coin'),
-        ]);
+        //
     }
 
     /**
