@@ -11,7 +11,10 @@
 |
 */
 
-Route::get('/', function () {
+
+Route::get('/', 'WorkerController@index');
+
+Route::get('/test', function () {
     $trader = new \App\Crypto\Macd('gdax');
     
     $worker = App\Worker::find(request('oid'));
@@ -36,11 +39,15 @@ Route::get('/create-job', function () {
 
     // print_r($worker);
 
-    App\Trade::create([
-    	'worker_id' => $worker->id,
+    $worker->trades()->create([
+    	// 'worker_id' => $worker->id,
     	'amount' => request('amount'),
     	'coin' => request('coin'),
     ]);
 
     return 'created';
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
