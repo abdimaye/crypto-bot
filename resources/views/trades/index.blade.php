@@ -13,7 +13,7 @@
                         <td>Amount</td>
                         <td>Coin</td>
                         <td>Date time</td>
-                        <td>Trades</td>
+                        <td>Change (from previous)</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,7 +23,7 @@
                         <td>{{ $trade->amount }}</td>
                         <td>{{ $trade->coin }}</td>
                         <td>{{ $trade->updated_at }}</td>
-                        <td><a href="/worker/{{ $trade->id }}/trades">show</a></td>
+                        <td>% up/down</td>
                     </tr>
                     @endforeach
                 </tbody>
