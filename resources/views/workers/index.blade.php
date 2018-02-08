@@ -23,7 +23,7 @@
                             <td>{{ $worker->exchange }}</td>
                             <td>{{ $worker->symbol }}</td>
                             <td>{{ $worker->active }}</td>
-                            <td><a href="/worker/{{ $worker->id }}/trades">trades</a></td>
+                            <td><a href="/workers/{{ $worker->id }}">show</a></td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -35,7 +35,8 @@
     
     <div class="row" style="text-align: center">
         <div class="col-md-6 col-md-offset-3">
-            <form class="form-group" id="new-worker-form">
+            <form action="/workers/store" method="post" class="form-group" id="new-worker-form">
+                {{ csrf_field() }}
                 <div class="form-group">
                     <select class="form-control" name="exchange" id="">
                         <option value="" disabled="" selected="">Select Exchange</option>
@@ -43,10 +44,10 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <select class="form-control" name="exchange" id="">
+                    <select class="form-control" name="symbol" id="">
                         <option value="" disabled="" selected="">Select Pairing</option>
-                        <option value="gdax">BTC/USD</option>
-                        <option value="gdax">BTC/EUR</option>
+                        <option value="BTC/USD">BTC/USD</option>
+                        <option value="BTC/EUR">BTC/EUR</option>
                         <option value="" disabled="">More Coming Soon</option>
                     </select>
                 </div>
@@ -54,17 +55,18 @@
                     <div class="input-group">
                         <div class="input-group-addon">
                             <select name="coin" id="" style="background-color: transparent; border: none;">
-                                <option value="usd">$</option>
+                                <option value="USD">$</option>
+                                <option value="EUR">$</option>
                             </select>
                         </div>
-                        <input type="text" class="form-control" id="" placeholder="Trading Amount">
+                        <input type="text" name="amount" class="form-control" id="" placeholder="Trading Amount">
                         <div class="input-group-addon">.00</div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <select class="form-control" name="trade-type" id="">
+                    <select class="form-control" name="type" id="">
                         <option value="" disabled="" selected="">Select Trade Type</option>
-                        <option value="simulate">Simulation</option>
+                        <option value="simulation">Simulation</option>
                         <option value="real" disabled="">Real trading coming soon</option>
                     </select>
                 </div>
@@ -72,7 +74,7 @@
             </form>
             <div class="row add-worker" style="text-align: center">
                 <p>Add New Worker</p>
-                <button id="add-worker">+</button>
+                <button type="submit" id="add-worker">+</button>
             </div>
         </div>
 

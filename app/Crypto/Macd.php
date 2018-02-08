@@ -64,44 +64,31 @@ class Macd extends Trade
 		return $this;
 	}
 
+	/**
+	 * Buy/Sell or do nothing.
+	 * 
+	 * @param  collection $lastTrade 
+	 * @param  float $result shortEma - longEma 
+	 * @return string $decision buy/sell/chill
+	 */
 	protected function decision($lastTrade, $result)
 	{
 		$pair = explode('/', $this->symbol);
 
+		// The $base is always the asset which you are seeking to buy
+		// when the price is low, and sell when it increases.
+		// E.g. I have Euros and I want to buy Bitcoin.
 		$base = $pair[0];
 
 		if ($pair[1] == $lastTrade->coin && $result > 0) {
 			// buy
 			$decision = "I have " . $lastTrade->coin . ', I should buy ' . $base;;
-
-			// $newTrade = App\Trade::create([
-			// 	'worker_id' => $worker->id,
-			// 	'amount' => $lastTrade->amount / $ticker['last'],
-			// 	'coin' => $base,
-			// ]);
 		} else if ($base == $lastTrade->coin && $result < 0 ) {
 			// sell
-			// echo "I have " . $base . ', I should sell for ' . $pair[1];
-			// $this->sell();
 			$decision = "I have " . $base . ', I should sell for ' . $pair[1];
-
-			// $newTrade = App\Trade::create([
-			// 	'worker_id' => $worker->id,
-			// 	'amount' => $lastTrade->amount * $ticker['last'],
-			// 	'coin' => $pair[1],
-			// ]);
 		} else {
 			// chill
 			$decision = 'chill';
-			// echo 'pair: ' . $pair[0] . '/' . $pair[1] . '<br>';
-			// echo 'base: ' . $base . '<br>';
-			// echo 'result: ' . $result . '<br>';
-
-			// if ($result > 0) {
-			// 	echo 'You should buy ' . $base . ' but you do not have any EUR';
-			// } else if ($result < 0) {
-			// 	echo 'You should sell ' . $base . ' but you do not have any ' . $base;
-			// }
 		}
 
 		return $decision;

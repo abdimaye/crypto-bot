@@ -15,7 +15,7 @@ class WorkerController extends Controller
     {
         $workers = \App\Worker::all();
 
-        return view('index', compact('workers'));
+        return view('workers.index', compact('workers'));
     }
 
     /**
@@ -37,22 +37,28 @@ class WorkerController extends Controller
      */
     public function store(Request $request)
     {
-        $worker = App\Worker::create([
+        $worker = \App\Worker::create([
             'exchange' => request('exchange'),
             'symbol' => request('symbol'),
             // 'active' => 1
         ]);
+
+       if($this->storeTrade($request, $worker) ) return 'created';
+
+       return 'failed';
     }
 
-    public function storeTrade(Request $request, $id)
-    {
-        $worker = \App\Worker::findOrFail($id);
-        
-        $worker->trades()->create([
+    public function storeTrade(Request $request, $worker)
+    {   
+        $trade = $worker->trades()->create([
         // 'worker_id' => $worker->id,
-            'amount' => request('amount'),
-            'coin' => request('coin'),
+            'amount' => $request->amount,
+            'coin' => $request->coin,
         ]);
+
+        if ($trade) return true;
+
+        return false;
     }
 
     /**
@@ -63,7 +69,11 @@ class WorkerController extends Controller
      */
     public function show($id)
     {
-        //
+        $worker = \App\Worker::findOrFail($id);
+
+        $trades = $worker->trades()->get();
+
+        return view('workers.show', compact('worker', 'trades'));
     }
 
     /**

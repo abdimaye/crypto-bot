@@ -18,6 +18,7 @@ class CreateWorkersTbl extends Migration
             $table->string('exchange');
             $table->string('symbol');
             $table->boolean('active')->default(0);
+            $table->boolean('simulation')->default(1);
             $table->datetime('good_until')->nullable();
             $table->timestamps();
         });

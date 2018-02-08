@@ -13,9 +13,9 @@ class TradeController extends Controller
      */
     public function index($id)
     {
-        $trades = \App\Trade::where('worker_id', $id)->get();
+        // $trades = \App\Trade::where('worker_id', $id)->get();
 
-        return view('trades.index', compact('trades'));
+        // return view('trades.index', compact('trades'));
     }
 
     /**

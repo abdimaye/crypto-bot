@@ -12,9 +12,11 @@
 */
 
 
-Route::get('/', 'WorkerController@index');
+Route::get('/workers', 'WorkerController@index');
 
-Route::get('/worker/{id}/trades', 'TradeController@index');
+Route::get('/workers/{id}', 'WorkerController@show');
+
+Route::post('/workers/store', 'WorkerController@store');
 
 Route::get('/test', function () {
     $trader = new \App\Crypto\Macd('gdax');

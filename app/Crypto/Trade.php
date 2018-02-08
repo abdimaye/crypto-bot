@@ -15,15 +15,11 @@ abstract class Trade
 
 	/**
 	 * Paper trading.
-	 * 
-	 * @param  string $value [description]
-	 * @return [type]        [description]
 	 */
 	public function simulate()
 	{
 		$this->simulate = true;
 
-		// return $this->exchange->fetchTicker($worker->symbol);
 		return $this;
 	}
 	
