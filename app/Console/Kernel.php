@@ -26,6 +26,47 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        
+        $schedule->call(function() {
+            $trader = new \App\Crypto\Macd('gdax');
+    
+            $worker = \App\Worker::find(request('oid'));
+
+            $lastTrade = $worker->trades()->orderBy('id', 'desc')->first();
+
+            $trader->setInterval('1m')->setPeriods([12, 26])->simulate()->go('BTC/EUR', $lastTrade, function($decision, $data) use ($trader, $worker, $lastTrade) {
+
+                $ticker = $trader->exchange->fetchTicker($data['symbol']);
+
+                if ($decision == 'sell') {
+                    // sell BTC
+                    $amount = $lastTrade->amount * $ticker['last'];
+                    $coin = $data['pair'][1]; // BTC
+
+                    $worker->trades()->create([
+                        'amount' => $amount,
+                        'coin' => $coin
+                    ]);
+
+                    print_r('created');
+                } else if ($decision == 'buy') {
+                    // buy BTC
+                    $amount = $lastTrade->amount / $ticker['last'];
+                    $coin = $data['pair'][0]; // EUR
+
+                    $worker->trades()->create([
+                        'amount' => $amount,
+                        'coin' => $coin
+                    ]);
+
+                    print_r('created');
+                }
+
+                print_r($decision);
+
+                // print_r($ticker);
+            });
+        });
     }
 
     /**

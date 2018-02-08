@@ -10,6 +10,7 @@ namespace App\Crypto;
 class Macd extends Trade
 {
 	protected $symbol;
+	protected $pair;
 	protected $candles = [];
 	protected $currentSma;
 	protected $currentEma;
@@ -19,6 +20,7 @@ class Macd extends Trade
 	public function go($symbol, $lastTrade, $callback)
 	{
 		$this->symbol = $symbol;
+		$this->pair = explode('/', $this->symbol);
 		$timeframe = $this->timeframe;
 		$periods = $this->periods;
 		$shortPeriod = $periods[0];
@@ -43,7 +45,7 @@ class Macd extends Trade
 		// compare EMAs and make buy/sell decision
 		$result = $shortEma - $longEma; // buy if result > 0
 
-		$data = ['short_ema' => $shortEma, 'long_ema' => $longEma];
+		$data = ['symbol' => $this->symbol, 'pair' => $this->pair, 'short_ema' => $shortEma, 'long_ema' => $longEma];
 
 		$decision = $this->decision($lastTrade, $result);
 
@@ -73,7 +75,7 @@ class Macd extends Trade
 	 */
 	protected function decision($lastTrade, $result)
 	{
-		$pair = explode('/', $this->symbol);
+		$pair = $this->pair;
 
 		// The $base is always the asset which you are seeking to buy
 		// when the price is low, and sell when it increases.
@@ -82,10 +84,12 @@ class Macd extends Trade
 
 		if ($pair[1] == $lastTrade->coin && $result > 0) {
 			// buy
-			$decision = "I have " . $lastTrade->coin . ', I should buy ' . $base;;
+			// $decision = "I have " . $lastTrade->coin . ', I should buy ' . $base;;
+			$decision = 'buy';
 		} else if ($base == $lastTrade->coin && $result < 0 ) {
 			// sell
-			$decision = "I have " . $base . ', I should sell for ' . $pair[1];
+			// $decision = "I have " . $base . ', I should sell for ' . $pair[1];
+			$decision = 'sell';
 		} else {
 			// chill
 			$decision = 'chill';

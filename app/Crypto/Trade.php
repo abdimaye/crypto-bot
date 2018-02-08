@@ -23,15 +23,14 @@ abstract class Trade
 		return $this;
 	}
 	
-	protected function buy() 
-	{
-		if ($this->simulate) {
-			// do nothing
-			return ;
-		}
-	}
-
-	protected function sell()
+	/**
+	 * Act on a decision made to buy or sell.
+	 * 
+	 * @param  string $position buy/sell
+	 * @return [type]           [description]
+	 */
+	
+	public function act($position) 
 	{
 		if ($this->simulate) {
 			// do nothing
