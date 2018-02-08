@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function() {
             $trader = new \App\Crypto\Macd('gdax');
     
-            $worker = \App\Worker::find(request('oid'));
+            $worker = \App\Worker::find(1);
 
             $lastTrade = $worker->trades()->orderBy('id', 'desc')->first();
 
