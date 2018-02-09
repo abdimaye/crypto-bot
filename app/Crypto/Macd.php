@@ -2,6 +2,8 @@
 
 namespace App\Crypto;
 
+use App\Worker;
+
 /**
 * Implementation of MACD - Moving Average Convergence Divergence
 * Calculated by subtracting 26-day/period EMA from 12-day/period EMA		
@@ -16,8 +18,9 @@ class Macd extends Trade
 	protected $currentEma;
 	protected $timeframe = '5m';
 	protected $periods = [12, 26];
+	protected $decision = 'chill';
 
-	public function go($symbol, $lastTrade, $callback)
+	public function go($symbol, $callback = '')
 	{
 		$this->symbol = $symbol;
 		$this->pair = explode('/', $this->symbol);
@@ -47,9 +50,14 @@ class Macd extends Trade
 
 		$data = ['symbol' => $this->symbol, 'pair' => $this->pair, 'short_ema' => $shortEma, 'long_ema' => $longEma];
 
-		$decision = $this->decision($lastTrade, $result);
+		// $decision = $this->decision($lastTrade, $result);
+		$this->decision = ($result < 0) ? 'sell' : 'buy';
 
-		return $callback($decision, $data);
+		if (is_callable($callback)) {
+			$callback($this->decision, $data);
+		}
+
+		return $this;
 	}
 
 	public function setInterval(string $timeframe)
@@ -66,36 +74,42 @@ class Macd extends Trade
 		return $this;
 	}
 
-	/**
-	 * Buy/Sell or do nothing.
-	 * 
-	 * @param  collection $lastTrade 
-	 * @param  float $result shortEma - longEma 
-	 * @return string $decision buy/sell/chill
-	 */
-	protected function decision($lastTrade, $result)
+	public function save(Worker $worker)
 	{
+		$ticker = $this->exchange->fetchTicker($this->symbol);
+
 		$pair = $this->pair;
+
+		$lastTrade = $worker->trades()->orderBy('id', 'desc')->first();
 
 		// The $base is always the asset which you are seeking to buy
 		// when the price is low, and sell when it increases.
 		// E.g. I have Euros and I want to buy Bitcoin.
 		$base = $pair[0];
 
-		if ($pair[1] == $lastTrade->coin && $result > 0) {
-			// buy
-			// $decision = "I have " . $lastTrade->coin . ', I should buy ' . $base;;
-			$decision = 'buy';
-		} else if ($base == $lastTrade->coin && $result < 0 ) {
-			// sell
-			// $decision = "I have " . $base . ', I should sell for ' . $pair[1];
-			$decision = 'sell';
-		} else {
-			// chill
-			$decision = 'chill';
-		}
+    	if ($base == $lastTrade->coin && $this->decision == 'sell') {
+    		// sell a.k.a short position
+    		$amount = $lastTrade->amount * $ticker['last'];
+    		$coin = $pair[1]; // BTC
 
-		return $decision;
+    		$worker->trades()->create([
+    			'amount' => $amount,
+    			'coin' => $coin
+    		]);
+
+    		print_r('created');
+    	} else if ($pair[1] == $lastTrade->coin && $this->decision == 'buy') {
+    		// buy - a.k.a long position
+    		$amount = $lastTrade->amount / $ticker['last'];
+    		$coin = $pair[0]; // EUR
+
+    		$worker->trades()->create([
+    			'amount' => $amount,
+    			'coin' => $coin
+    		]);
+
+    		print_r('created');
+    	}
 	}
 
 	/**
