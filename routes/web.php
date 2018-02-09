@@ -20,14 +20,14 @@ Route::post('/workers/store', 'WorkerController@store');
 
 Route::get('/test', function () {
     $trader = new \App\Crypto\Macd('gdax');
-    
-    $worker = App\Worker::find(request('oid'));
+   
+    $worker = App\Worker::isActive(request('oid'));
 
     $trader->setInterval('5m')->setPeriods([12, 26])->simulate()->go('BTC/EUR', function($decision, $data) {
-    	print_r($data);
+    	// print_r($data);
     })->save($worker);
 });
 
-// Auth::routes();
+Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');

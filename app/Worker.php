@@ -12,4 +12,9 @@ class Worker extends Model
     {
     	return $this->hasMany('App\Trade');
     }
+
+    public static function isActive($id)
+    {
+    	return self::where('id', $id)->where('active', 1)->firstOrFail();
+    }
 }

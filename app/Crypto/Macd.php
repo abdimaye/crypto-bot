@@ -90,7 +90,7 @@ class Macd extends Trade
     	if ($base == $lastTrade->coin && $this->decision == 'sell') {
     		// sell a.k.a short position
     		$amount = $lastTrade->amount * $ticker['last'];
-    		$coin = $pair[1]; // BTC
+    		$coin = $pair[1]; // EUR
 
     		$worker->trades()->create([
     			'amount' => $amount,
@@ -101,7 +101,7 @@ class Macd extends Trade
     	} else if ($pair[1] == $lastTrade->coin && $this->decision == 'buy') {
     		// buy - a.k.a long position
     		$amount = $lastTrade->amount / $ticker['last'];
-    		$coin = $pair[0]; // EUR
+    		$coin = $pair[0]; // BTC
 
     		$worker->trades()->create([
     			'amount' => $amount,

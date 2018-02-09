@@ -26,6 +26,25 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        $schedule->call(function() {
+            $trader = new \App\Crypto\Macd('gdax');
+   
+            $worker = \App\Worker::isActive(2);
+
+            $trader->setInterval('5m')->setPeriods([12, 26])->simulate()->go('BTC/EUR', function($decision, $data) {
+                print_r($data);
+            })->save($worker);
+        })->everyMinute();
+
+        $schedule->call(function() {
+            $trader = new \App\Crypto\Macd('gdax');
+   
+            $worker = \App\Worker::isActive(4);
+
+            $trader->setInterval('1m')->setPeriods([12, 26])->simulate()->go('BTC/EUR', function($decision, $data) {
+                print_r($data);
+            })->save($worker);
+        })->cron('*/2 * * * *'); // every two minutes
     }
 
     /**
