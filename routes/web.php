@@ -24,8 +24,22 @@ Route::get('/test', function () {
     $worker = App\Worker::isActive(request('oid'));
 
     $trader->setInterval('5m')->setPeriods([12, 26])->simulate()->go('BTC/EUR', function($decision, $data) {
-    	// print_r($data);
+    	print_r($data);
     })->save($worker);
+});
+
+Route::get('markets/{exchange}', function($exhange) {
+	// $trader = new App\Crypto\Macd($exhange);
+
+	// return $trader->exchange->loadMarkets();
+	
+});
+
+Route::get('/mongo', function() {
+	
+	$test = DB::connection('mongodb')->collection('test')->get();
+
+	dd($test);
 });
 
 Auth::routes();

@@ -78,6 +78,12 @@ return [
             'prefix' => '',
         ],
 
+        'mongodb' => [
+            'driver'   => 'mongodb',
+            'dsn' => env('MONGODB_DSN'),
+            'database' => env('MONGODB_DATABASE', 'test'),
+        ],
+
     ],
 
     /*
