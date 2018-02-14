@@ -4,7 +4,7 @@ namespace App\Crypto;
 
 use DB;
 use ccxt\DDoSProtection;
-use MongoDB\BSON\UTCDateTime;
+// use MongoDB\BSON\UTCDateTime;
 use MongoDB\Driver\Exception\BulkWriteException;
 
 /**
@@ -45,7 +45,11 @@ class Data
 
 			foreach($candles as $index => $candle) {
 				
-				$date = new UTCDateTime($candle[0]);
+				// $date = new \MongoDB\BSON\UTCDateTime($candle[0]);//
+
+				$date = gmdate('Y-m-d H:i:s.000',$candle[0] / 1000);
+
+				print_r($date);
 
 				$open = ['open' => $candles[$index][1]];
 				$high = ['high' => $candles[$index][2]];
@@ -58,12 +62,13 @@ class Data
 
 			try {
 				$test = DB::connection('mongodb')->collection("candles_{$exchange}_{$interval}_{$symbol}")->insert($data);
+				// $test = \App\Test::insert($data);
 			} catch (BulkWriteException $e) {
 				continue;
 			}
 		
 		}
 
-		return true;
+		// return $candles;
 	}
 }
