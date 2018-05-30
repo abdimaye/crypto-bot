@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "ccxt/ccxt",
-            "version": "1.10.1094",
+            "version": "1.10.1103",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ccxt/ccxt.git",
-                "reference": "13ea6a2e93f8f835d69cb2b2b50cc57d4bd6092b"
+                "reference": "fd4a16d261cd1afd7575e3e17a44e0f04f7cf07a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ccxt/ccxt/zipball/13ea6a2e93f8f835d69cb2b2b50cc57d4bd6092b",
-                "reference": "13ea6a2e93f8f835d69cb2b2b50cc57d4bd6092b",
+                "url": "https://api.github.com/repos/ccxt/ccxt/zipball/fd4a16d261cd1afd7575e3e17a44e0f04f7cf07a",
+                "reference": "fd4a16d261cd1afd7575e3e17a44e0f04f7cf07a",
                 "shasum": ""
             },
             "require": {
@@ -258,7 +258,7 @@
                 "zec",
                 "zerocoin"
             ],
-            "time": "2018-02-12T16:21:10+00:00"
+            "time": "2018-02-14T08:59:30+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",

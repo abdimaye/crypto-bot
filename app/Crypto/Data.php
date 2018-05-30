@@ -49,7 +49,7 @@ class Data
 
 				$date = gmdate('Y-m-d H:i:s.000',$candle[0] / 1000);
 
-				print_r($date);
+				// print_r($date);
 
 				$open = ['open' => $candles[$index][1]];
 				$high = ['high' => $candles[$index][2]];

@@ -37,6 +37,7 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         $schedule->call(function() {
+            sleep(1);
             $trader = new \App\Crypto\Macd('gdax');
    
             $worker = \App\Worker::isActive(4);
@@ -47,6 +48,7 @@ class Kernel extends ConsoleKernel
         })->cron('*/2 * * * *'); // every two minutes
 
         $schedule->call(function() {
+            sleep(1);
             $trader = new \App\Crypto\Macd('gdax');
    
             $worker = \App\Worker::isActive(5);
@@ -57,6 +59,7 @@ class Kernel extends ConsoleKernel
         })->everyMinute(); 
 
         $schedule->call(function() {
+            sleep(1);
             $trader = new \App\Crypto\Macd('gdax');
    
             $worker = \App\Worker::isActive(6);
@@ -69,34 +72,34 @@ class Kernel extends ConsoleKernel
         // data aggregator
         
         // every minute
-        $schedule->call(function() {
-            $data = (new \App\Crypto\Data('gdax'))->collectCandles('1m');
-            $data = (new \App\Crypto\Data('binance'))->collectCandles('1m');
-        })->everyMinute();
+        // $schedule->call(function() {
+        //     $data = (new \App\Crypto\Data('gdax'))->collectCandles('1m');
+        //     $data = (new \App\Crypto\Data('binance'))->collectCandles('1m');
+        // })->everyMinute();
 
-        // every five mimutes
-        $schedule->call(function() {
-            $data = (new \App\Crypto\Data('gdax'))->collectCandles('5m');
-            $data = (new \App\Crypto\Data('binance'))->collectCandles('5m');
-        })->everyFiveMinutes();
+        // // every five mimutes
+        // $schedule->call(function() {
+        //     $data = (new \App\Crypto\Data('gdax'))->collectCandles('5m');
+        //     $data = (new \App\Crypto\Data('binance'))->collectCandles('5m');
+        // })->everyFiveMinutes();
 
-        // every 15 minutes
-        $schedule->call(function() {
-            $data = (new \App\Crypto\Data('gdax'))->collectCandles('15m');
-            $data = (new \App\Crypto\Data('binance'))->collectCandles('15m');
-        })->everyFifteenMinutes();
+        // // every 15 minutes
+        // $schedule->call(function() {
+        //     $data = (new \App\Crypto\Data('gdax'))->collectCandles('15m');
+        //     $data = (new \App\Crypto\Data('binance'))->collectCandles('15m');
+        // })->everyFifteenMinutes();
 
-        // every hour
-        $schedule->call(function() {
-            $data = (new \App\Crypto\Data('gdax'))->collectCandles('1h');
-            $data = (new \App\Crypto\Data('binance'))->collectCandles('1h');
-        })->hourly();
+        // // every hour
+        // $schedule->call(function() {
+        //     $data = (new \App\Crypto\Data('gdax'))->collectCandles('1h');
+        //     $data = (new \App\Crypto\Data('binance'))->collectCandles('1h');
+        // })->hourly();
 
-        // every day
-        $schedule->call(function() {
-            $data = (new \App\Crypto\Data('gdax'))->collectCandles('1d');
-            $data = (new \App\Crypto\Data('binance'))->collectCandles('1d');
-        })->daily();
+        // // every day
+        // $schedule->call(function() {
+        //     $data = (new \App\Crypto\Data('gdax'))->collectCandles('1d');
+        //     $data = (new \App\Crypto\Data('binance'))->collectCandles('1d');
+        // })->daily();
     }
 
     /**
